@@ -38,7 +38,7 @@ window_symbols.configure(state="disabled")
 window_output.configure(state="disabled")
 
 
-open_btn.grid(column=0, row=0)#place widgets on grid
+open_btn.grid(column=0, row=0,sticky=E+W)#place widgets on grid
 label_lex.grid(column=1,row=0)
 label_symbol.grid(column=2,row=0)
 execute_btn.grid(column=0, row=3,sticky=E+W, columnspan=3)
