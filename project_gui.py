@@ -54,8 +54,14 @@ treeSymbol.configure(yscrollcommand=verticalScrollSymbol.set)
 
 
 
+lexemeList=[]#THIS IS WHERE SYMBOLS AND LEXEMES ARE STORED
+symbolList=[]
+
+
 def clicked():#File open dialog
     # fileName = filedialog.askopenfilename(filetypes = (("Lolcode","*.lol"),))#lol files only
+    # ^ Commented out for ease of debugging
+
     fileName = "assignop.lol"
     try:
         with open(fileName,'r') as fileHandler:
@@ -71,9 +77,14 @@ def clicked():#File open dialog
 def deleteTable():
     treeSymbol.delete(*treeSymbol.get_children())
     treeLex.delete(*treeLex.get_children())
+    for row in treeSymbol.get_children():
+    	treeSymbol.delete(row)
+    lexemeList.clear()
+    symbolList.clear()
+    for row in treeLex.get_children():
+    	treeLex.delete(row)
 
-lexemeList=[]
-symbolList=[]
+
 
 valid_keywords={
     "^I HAS A ":"Variable Declaration",
@@ -108,7 +119,7 @@ def identify(line,haiFlag,baiFlag): #break down into lexemes (long ass if else)
         lexemeList.append( ("I HAS A", "Variable Declaration"))
         #get the variable
         possibleVar = re.sub("^I HAS A ","",line)
-        print("POS \""+possibleVar+"\"")
+
         if re.search("^[A-Za-z][A-Za-z0-9_]*$", possibleVar):
             symbolList.append((possibleVar,"Variable Identifier"))
 
