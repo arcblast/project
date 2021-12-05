@@ -1,6 +1,15 @@
 BTW for assignment to variables
+OBTW this nein
+nein nein 
+Way
+TLDR
+OBTW 
+meow meow
+arf
+Way
+TLDR
 HAI
-  I HAS A var1
+  I HAS A var1 ITZ 69
   I HAS A var2
   I HAS A var3
   I HAS A var4
@@ -8,6 +17,7 @@ HAI
   I HAS A var6
   I HAS A var7
   I HAS A var8
+  I HAS A var9
   
   BTW assignment of literals
   var1 R 17
