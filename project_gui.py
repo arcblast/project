@@ -106,7 +106,6 @@ def clicked():#File open dialog
     fileName = filedialog.askopenfilename(filetypes = (("Lolcode","*.lol"),))#lol files only
     # fileName = "io.lol"
 
-   
     try:
         with open(fileName,'r') as fileHandler:
             window_input.delete("1.0","end")#deletes old text from window
@@ -130,7 +129,9 @@ def deleteTable():#Delete everything every time you execute the program
     window_output.delete("1.0","end")
 
 
-def evaluateExpression(line):#Recursive function for nested conditions
+
+
+def evaluateExpression(line):#Recursive function for nested arithmetic expressions
 
 
     if re.search("^-?[0-9]+$",line): #Base Case = only NUMBR left
@@ -238,7 +239,7 @@ def evaluateExpression(line):#Recursive function for nested conditions
         return line
 
 
-def evaluateBoolExpression(line): #Recursive function for nested conditions
+def evaluateBoolExpression(line): #Recursive function for boolean expressions
 
     line = line.replace("NOT WIN","FAIL")#Remove at the start every time because it is possible to have "NOT [bool_operator]"
     line = line.replace("NOT FAIL","WIN")
@@ -347,7 +348,7 @@ def evaluateBoolExpression(line): #Recursive function for nested conditions
         return line
 
 
-def evaluateCompExpression(line): #Recursive function for nested conditions
+def evaluateCompExpression(line): #Recursive function for comparison expressions
 
     if re.search("^WIN$", line) or re.search("^FAIL$", line):#BASE CASE
         return line
@@ -441,13 +442,11 @@ def evaluateCompExpression(line): #Recursive function for nested conditions
                 return evaluateCompExpression(remaining)
             
                 
-
-
         return line
 
 
 
-def dataType(value,possibleName):
+def dataType(value,possibleName):#Find out what kind of data
 
     if re.search("^\".*\"", value):#YARN or STRING
         lexemeList.append(("\"","String delimiter"))
@@ -499,12 +498,12 @@ def varRemoval_For_Expressions(line): #Remove variables from expressions
     print("Current Line [",line,"] after variable removal")
     return line
 
-def checkifAnyExpression(line):
+def checkifAnyExpression(line): #Check if expression at all
     if checkifBoolExpression(line) or checkifCompExpression(line) or checkifExpression(line):
         return True
     return False
 
-def evaluateAnyExpression(value, possibleName):#Recursive function for solving expressions with different operators
+def evaluateAnyExpression(value, possibleName):#Recursive function for solving any expressions with different operators
 
   if re.search("^((-?[0-9]+.[0-9]+)|(-?[0-9]+)|(WIN|FAIL))$", value):#BASE CASE
     print("Evaluate Any Expression Return <",value,">")
@@ -528,8 +527,7 @@ def evaluateAnyExpression(value, possibleName):#Recursive function for solving e
   
 
 
-
-def visibleStatement(line):
+def visibleStatement(line): #Recursive statement for printing
     line=line.strip()
     if line=="":
       print("Visible Return")
@@ -599,7 +597,7 @@ def visibleStatement(line):
 
         visibleStatement(line)
 
-def identify(line,haiFlag,baiFlag, multiLine,stop, falseFlag ): #break down into lexemes (VERY LONG if else, reads lines seperated by newline)
+def identify(line,haiFlag,baiFlag, multiLine,stop, falseFlag ): #evaluates every line
 
     print("Current line <"+line+">")
     comment=''
@@ -621,12 +619,12 @@ def identify(line,haiFlag,baiFlag, multiLine,stop, falseFlag ): #break down into
         elif re.search("^HAI",line):#HAI
             lexemeList.append( ("HAI", "Code Delimiter"))
             haiFlag=True
-        elif re.search("^BTW",line):#COMMENTS
+        elif re.search("^BTW",line):#Comments
             lexemeList.append( ("BTW", "Single Line Comment Identifier"))
             comment = re.sub("^BTW","",line).strip()
             lexemeList.append( (comment,"Single Line Comment"))
 
-        elif re.search("^OBTW",line):#MULTILINE COMMENTS
+        elif re.search("^OBTW",line):#Multiline comments
             lexemeList.append(("OBTW", "Multiline Comment Identifier"))
             comment=re.sub("^OBTW","",line).strip()
             lexemeList.append((comment, "Multiline comment"))
@@ -728,8 +726,6 @@ def identify(line,haiFlag,baiFlag, multiLine,stop, falseFlag ): #break down into
                 return haiFlag, baiFlag, multiLine, True, falseFlag
 
 
-
-
         elif re.search("^BTW",line):#Comments
             lexemeList.append( ("BTW", "Single Line Comment Identifier"))
             comment = re.sub("^BTW","",line).strip()
@@ -780,13 +776,13 @@ def identify(line,haiFlag,baiFlag, multiLine,stop, falseFlag ): #break down into
             lexemeList.append(("OIC","Switch Ending Statement"))
             falseFlag=False
 
-        elif re.search("GIMMEH ",line):#User INput
+        elif re.search("GIMMEH ",line):#User Input
             possibleVar = re.sub("GIMMEH ","",line)
             lexemeList.append(("GIMMEH","User Input"))
             lexemeList.append((possibleVar,"Variable"))
             print("Possible Input Var: <",possibleVar,">")
 
-
+            #needs to be global so deleteTable() can access it
             label_widget = tk.Label(window, text="User Input Here:")#Input text window will pop up
             terminal_input = tk.Entry(window)
             terminal_input.grid(column=1,row=4,columnspan=2,rowspan=1,sticky="nsew")
@@ -794,10 +790,9 @@ def identify(line,haiFlag,baiFlag, multiLine,stop, falseFlag ): #break down into
 
             terminal_input.insert(tk.END,'')
             terminal_input.bind('<Return>',sendInput)#Input window will send variable if the user presses ENTER
-          
 
             window.wait_variable(buttonPress)#GUI loop will wait for input of user
-
+            
             data = terminal_input.get()
             print("terminal_input: ",data)
 
@@ -829,7 +824,7 @@ def identify(line,haiFlag,baiFlag, multiLine,stop, falseFlag ): #break down into
 
 
   
-        else:
+        else:#Error
             print("Last line", line)
             window_output.insert(tk.INSERT,"ERROR\n")#Add things here
             print("STOPPU")
@@ -845,7 +840,7 @@ def sendInput(line):
 
 
 
-def interpret(): #Add all the functions for interpeting here
+def interpret(): #Main Program
     deleteTable()
 
     inputLines=window_input.get("1.0","end")#Add code to the symbol and lexemes table
@@ -866,8 +861,6 @@ def interpret(): #Add all the functions for interpeting here
             break
 
     
-    # print("LEXEMES")
-    # print(lexemeList)
 
     print("SYMBOLS")
     print(symbolList)
@@ -878,7 +871,7 @@ def interpret(): #Add all the functions for interpeting here
 
 
     i=0
-    for key,value in symbolList.items():
+    for key,value in symbolList.items():#Insert values in symbol table
         if value==None:
             treeSymbol.insert(parent='',index='end',iid=i,values=(wrap(key), wrap("NOOB")))
         else:
@@ -888,10 +881,9 @@ def interpret(): #Add all the functions for interpeting here
 
     window_output.configure(state="normal")#unlock window for output
     
-    # window_output.insert(tk.INSERT,"THE BIG GAY\n")#Add things here
     
     window_output.configure(state="disabled")#lock window for output
-    # deleteTable()
+
 
 
 
@@ -901,8 +893,7 @@ def gimmehInput():
     
     var = buttonPress.set("button pressed")
     
-#EVERYTHING GUI RELATED 
-
+#======= GUI RELATED =======
 
 
 open_btn = tk.Button(window, text="Open file",bg="gray", command=clicked)  
@@ -940,5 +931,6 @@ execute_btn.grid(column=0, row=2,sticky="EW", columnspan=3)
 window_output.grid(column=0,row=3,columnspan=3,rowspan=1,sticky="nsew")
 
 
-
 window.mainloop()
+
+#======= GUI RELATED END =======
